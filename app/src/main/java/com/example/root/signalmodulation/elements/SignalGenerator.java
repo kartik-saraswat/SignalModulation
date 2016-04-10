@@ -8,9 +8,6 @@ import org.rajawali3d.primitives.Line3D;
 
 import java.util.Stack;
 
-/**
- * Created by root on 29/3/16.
- */
 public class SignalGenerator {
 
     synchronized public static Line3D generateAnalogSignal(Analog signal, Vector3 position){
@@ -60,7 +57,7 @@ public class SignalGenerator {
     synchronized public static Line3D generateAnalogCarrier(Analog signal, Vector3 position){
         Vector3 temp = new Vector3();
         float sWidth = signal.getScaledWidth();
-        float cWidth = sWidth/Analog.CARRIER_WIDTH_FACTOR;
+        float cWidth = (sWidth/2)/Analog.CARRIER_WIDTH_FACTOR;
         int noOfPeriods = (int)(ModulationModel.AXIS_LENGTH/cWidth);
         int noOfSegments = noOfPeriods*16;
 
@@ -105,7 +102,7 @@ public class SignalGenerator {
     synchronized public static Line3D generateAnalogAmplitudeModulated(Analog signal, Vector3 position){
         Vector3 temp = new Vector3();
         float sWidth = signal.getScaledWidth();
-        float cWidth = sWidth/Analog.CARRIER_WIDTH_FACTOR;
+        float cWidth = (sWidth/2)/Analog.CARRIER_WIDTH_FACTOR;
         int noOfPeriods = (int)(ModulationModel.AXIS_LENGTH/cWidth);
         int noOfSegments = noOfPeriods*16;
 
@@ -164,8 +161,7 @@ public class SignalGenerator {
         float sWidth = signal.getScaledWidth();
         float cWidth = sWidth/Analog.CARRIER_WIDTH_FACTOR_FREQ;
         float pWidth = cWidth/2;
-        float nWidth = cWidth;
-        int noOfPeriods = (int)(2*ModulationModel.AXIS_LENGTH/(pWidth+nWidth));
+        int noOfPeriods = (int)(2*ModulationModel.AXIS_LENGTH/(pWidth+cWidth));
         int noOfSegments = noOfPeriods*16;
 
         temp.setAll(position.x, position.y - 0.1f, position.z);
@@ -178,7 +174,7 @@ public class SignalGenerator {
         boolean isCrustCycle = true;
         for(int i = 0, k = 0; i <= noOfPeriods; i++){
             k++;
-            if(isCrustCycle && (k%Analog.CARRIER_WIDTH_FACTOR_FREQ == 0)){
+            if(isCrustCycle && (k%(Analog.CARRIER_WIDTH_FACTOR_FREQ+1) == 0)){
                 k = 0;
                 isCrustCycle = false;
             } else if((!isCrustCycle) && (k%(Analog.CARRIER_WIDTH_FACTOR_FREQ/2) == 0)){
@@ -189,7 +185,7 @@ public class SignalGenerator {
             if(isCrustCycle){
                 d = pWidth/4;
             } else {
-                d = nWidth/4;
+                d = cWidth/4;
             }
 
             curve3D.addPoint(new Vector3(temp));
